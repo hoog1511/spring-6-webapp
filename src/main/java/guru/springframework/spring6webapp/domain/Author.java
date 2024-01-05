@@ -2,30 +2,31 @@ package guru.springframework.spring6webapp.domain;
 
 import jakarta.persistence.*;
 
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Created by jt, Spring Framework Guru.
+ */
 @Entity
 public class Author {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String firstName;
     private String lastName;
 
-    @ManyToMany
-    @JoinTable(name = "author_book", joinColumns = @JoinColumn(name = "book_id"),
-    inverseJoinColumns = @JoinColumn(name = "author_id"))
-    public Set<Author> getAuthors() {
-        return authors;
+    @ManyToMany(mappedBy = "authors")
+    private Set<Book> books = new HashSet<>();
+
+    public Set<Book> getBooks() {
+        return books;
     }
 
-    public void setAuthors(Set<Author> authors) {
-        this.authors = authors;
+    public void setBooks(Set<Book> books) {
+        this.books = books;
     }
-
-    private Set<Author> authors;
-
 
     public Long getId() {
         return id;
@@ -57,22 +58,22 @@ public class Author {
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", authors=" + authors +
+                ", books=" + books +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Author)) return false;
 
         Author author = (Author) o;
 
-        return Objects.equals(id, author.id);
+        return getId() != null ? getId().equals(author.getId()) : author.getId() == null;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return getId() != null ? getId().hashCode() : 0;
     }
 }
